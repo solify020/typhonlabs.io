@@ -1,0 +1,97 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('./font.css');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Eudoxus Sans", sans-serif;
+  scroll-behavior: smooth;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+
+.glassmorphism {
+  /* background: rgba(255, 255, 255, 0.25); */
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.bg-primary-black{
+  background-color: #161616!important
+}
+
+.feedback-gradient {
+  position: absolute;
+  width: 200px;
+  height: 316px;
+  left: 0px;
+  top: 0px;
+
+  background: #8d39a3;
+  filter: blur(175px);
+}
+
+.footer-gradient {
+  position: absolute;
+  width: 500px;
+  height: 100px;
+  left: 37%;
+  bottom: 0;
+
+  background: #65c4fa;
+  filter: blur(150px);
+}
+
+@layer utilities {
+  /* STYLES */
+  .innerWidth {
+    @apply 2xl:max-w-[1280px] w-full;
+  }
+  .interWidth {
+    @apply lg:w-[80%] w-full;
+  }
+  .paddings {
+    @apply sm:p-16 xs:p-8 px-6 py-12;
+  }
+  .yPaddings {
+    @apply sm:py-16 xs:py-8 py-12;
+  }
+  .xPaddings {
+    @apply sm:px-16 px-6;
+  }
+  .topPaddings {
+    @apply sm:pt-16 xs:pt-8 pt-12;
+  }
+  .bottomPaddings {
+    @apply sm:pb-16 xs:pb-8 pb-12;
+  }
+  .flexCenter {
+    @apply flex justify-center items-center;
+  }
+  .flexStart {
+    @apply flex justify-start items-start;
+  }
+  .flexEnd {
+    @apply flex justify-end;
+  }
+  .navPadding {
+    @apply pt-[98px];
+  }
+  /* Hero Section */
+  .heroHeading {
+    @apply font-bold lg:text-[144px] md:text-[100px] sm:text-[60px] text-[44px] lg:leading-[158.4px] md:leading-[114.4px] sm:leading-[74.4px] leading-[64.4px] uppercase text-white;
+  }
+  .heroDText {
+    @apply md:w-[212px] sm:w-[80px] w-[60px] md:h-[108px] sm:h-[48px] h-[38px] md:border-[18px] border-[9px] rounded-r-[50px] border-white sm:mx-2 mx-[6px];
+  }
+}
