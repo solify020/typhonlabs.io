@@ -228,7 +228,7 @@ const InfyNft = () => {
             }
 
             <div className="w-full p-6 text-center">
-              <Button size="sm" className='w-[200px] bg-[#161616] text-thite border-2 border-white' onClick={() => router.push("/alltokens?page=1&limit=10&order=desc&sortBy=market_cap")}>View all</Button>
+              {/* <Button size="sm" className='w-[200px] bg-[#161616] text-thite border-2 border-white' onClick={() => router.push("/alltokens?page=1&limit=10&order=desc&sortBy=market_cap")}>View all</Button> */}
             </div>
           </div>
         </div>
