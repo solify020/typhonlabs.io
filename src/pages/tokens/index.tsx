@@ -4,7 +4,6 @@ import imgSolana from '/public/images/solana.png';
 import CopyButton from "@/components/common/copyButton";
 import { useRouter } from "next/router";
 import Link from "next/link"; // Import Link from Next.js
-import { NEXT_PUBLIC_BACKEND_URL } from "@/config";
 import { Button } from "@/components/ui/button";
 import axios from "axios";
 
