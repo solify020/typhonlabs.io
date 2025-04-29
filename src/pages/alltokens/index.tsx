@@ -9,7 +9,6 @@ import { NEXT_PUBLIC_BACKEND_URL } from "@/config";
 const TableReact = () => {
     const router = useRouter();
     const { page = 1, limit = 10, order = "asc", sortBy = "market_cap" } = router.query;
-    const limitNum = typeof limit === 'string' ? parseInt(limit) : limit;
 
     interface Token {
         price?: number;

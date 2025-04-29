@@ -5,8 +5,7 @@ import { SendHorizonal } from "lucide-react";
 import { BeatLoader } from "react-spinners";
 import imgRobot from '/public/images/robot.png';
 import OpenAI from "openai";
-import TypewriterMarkdown from "@/components/TypeWriterMarkdown";
-import { marked } from "marked";
+import TypewriterMarkdown from "@/components/TypewriterMarkdown";
 import axios from "axios";
 
 interface Message {
@@ -34,7 +33,6 @@ const ChatbotPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [tokenData, setTokenData] = useState<TokenData | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const [parsed, setParsed] = useState<string>('');
 
   const predefinedQuestions = [
     "What is this token about?",

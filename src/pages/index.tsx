@@ -8,7 +8,6 @@ import HowItWorksSection from "@/sections/HowItWorks";
 import TokenomicsSection from "@/sections/Tokenomics";
 import SecuritySection from "@/sections/SecurityTrust";
 import FAQSection from "@/sections/FAQ";
-import CTASection from "@/sections/CTASection";
 import ToTop from "@/sections/ToTal";
 
 export default function Home() {

@@ -3,8 +3,7 @@ import { useRouter } from "next/router";
 import Image from "next/image";
 import { CardHeader, CardTitle, CardContent, CardDescription, Card } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
-import { NEXT_PUBLIC_BACKEND_URL } from "@/config";
+import { ResponsiveContainer } from "recharts";
 import axios from "axios";
 
 // Define image paths
