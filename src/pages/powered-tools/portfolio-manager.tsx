@@ -32,7 +32,7 @@ const PortfolioSummary = ({ tokens }: { tokens: TokenData[] }) => {
   const portfolioChange = tokens.reduce((sum, t) => sum + (t.priceChange24h * t.marketCap), 0) / totalValue;
 
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mt-28">
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">Total Value</CardTitle>

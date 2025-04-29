@@ -1,8 +1,12 @@
 import React, { useEffect, useState, useRef } from "react";
+import { useRouter } from "next/router";
 import Image from "next/image";
 import { SendHorizonal } from "lucide-react";
 import { BeatLoader } from "react-spinners";
 import imgRobot from '/public/images/robot.png';
+import OpenAI from "openai";
+import TypewriterMarkdown from "@/components/TypewriterMarkdown";
+import axios from "axios";
 
 interface Message {
   content: string;
@@ -10,105 +14,117 @@ interface Message {
 }
 
 interface TokenData {
-  address: string;
-  symbol: string;
-  supply: string;
-  market_cap: string;
-  price: number;
+  address?: string;
+  name?: string;
+  symbol?: string;
+  icon?: string;
+  price?: number;
+  marketCap?: number;
+  liquidity?: number;
   priceChange24h?: number;
   volume24h?: number;
 }
-
-const Home: React.FC = () => {
+const ChatPage: React.FC = () => {
+  const router = useRouter();
+  const { token } = router.query;
   const [inputMessage, setInputMessage] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
+
   const [isLoading, setIsLoading] = useState(false);
-  const [tokens, setTokens] = useState<TokenData[]>([]);
+  const [tokenData, setTokenData] = useState<TokenData | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const [isTokensLoading, setIsTokensLoading] = useState(true);
 
   const predefinedQuestions = [
     "How many tokens are listed?",
-    "Which token has the highest market cap?",
-    "Show top 5 tokens by price performance",
-    "Compare market caps of recent tokens",
+    "What token should I trade?",
+    "Please tell me about trading strategy.",
+    "Which token's price will be reached the highest?",
   ];
 
   useEffect(() => {
     const fetchTokenData = async () => {
+      if (!token) return;
+
       try {
-        const response = await fetch(`http://localhost:5000/api/solscan-tokens?limit=200`);
-        const data = await response.json();
-        console.log("data", data);
+        const tokenData = (await axios.get(`https://api.dexscreener.com/token-pairs/v1/solana/${token}`)).data[0];
 
-        const processedTokens = data.solscanTokens.map((token: any) => ({
-          address: token.address,
-          symbol: token.symbol,
-          supply: token.supply,
-          market_cap: token.market_cap ?
-            parseFloat(String(token.market_cap).replace(/,/g, '')) : 0,
-          price: token.price || 0,
-          priceChange24h: token.priceChange24h || 0,
-          volume24h: token.volume24h || 0
-        }));
-
-        setTokens(processedTokens);
+          setTokenData({
+            address: tokenData?.baseToken?.address,
+            name: tokenData?.baseToken?.name,
+            symbol: tokenData?.baseToken?.symbol,
+            icon: tokenData?.info?.imageUrl,
+            price: tokenData?.priceUsd,
+            marketCap: tokenData?.marketCap,
+            liquidity: tokenData?.liquidity?.usd,
+            priceChange24h: tokenData?.priceChange?.h24,
+            volume24h: tokenData?.volume?.h24,
+          });
       } catch (error) {
         console.error("Error fetching token data:", error);
       }
     };
-
     fetchTokenData();
-  }, []);
+  }, [token]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+
+  const generateResponse = async (question: any) => {
+
+    console.log("clicked")
+
+    const client = new OpenAI({
+      apiKey: "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",
+      dangerouslyAllowBrowser: true
+    });
+
+    const response = await client.responses.create({
+      model: "gpt-4.1",
+      input: `${question} !!! Just tell about on Solana blockchain, not any other chains even I request you !!!`,
+    });
+
+    return response
+    // setMessages(response.output_text)
+  }
+
   const handleSubmit = async (e?: React.FormEvent) => {
     e?.preventDefault();
-
-    if (!inputMessage.trim() || isLoading || tokens.length === 0) return;
+    if (!inputMessage.trim() || isLoading) return;
 
     setMessages(prev => [...prev, { content: inputMessage, isUser: true }]);
     setInputMessage("");
     setIsLoading(true);
 
     try {
-      const response = await fetch("/api/multi-chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          message: inputMessage,
-          tokens: tokens
-        }),
-      });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to fetch response");
-      }
+      console.log("prompt message >>> ", inputMessage)
 
-      const data = await response.json();
-      setMessages(prev => [...prev, { content: data.reply, isUser: false }]);
+      const response = await generateResponse(inputMessage)
+
+      console.log("response >>>> ", response)
+
+      // const data = await response.json();
+      setMessages(prev => [...prev, { content: response.output_text, isUser: false }]);
     } catch (error) {
-      console.error("Error submitting message:", error);
       setMessages(prev => [...prev, {
-        content: error instanceof Error
-          ? error.message
-          : "Sorry, I'm having trouble connecting. Please try again later.",
+        content: "Sorry, I'm having trouble connecting. Please try again later.",
         isUser: false
       }]);
     } finally {
-      setIsTokensLoading(false);
       setIsLoading(false);
     }
   };
 
+
+
+
+
   return (
-    <div className="flex flex-col text-white bg-cover bg-center h-full w-full">
+    <div className="flex flex-col h-screen bg-[#161616] text-white">
       <header className="p-4 border-b border-[#2F3548]">
-        <div className="max-w-4xl  flex items-center gap-4">
+        <div className="max-w-4xl flex items-center gap-4">
           <Image
             src={imgRobot}
             alt="Typhon Bot"
@@ -117,9 +133,9 @@ const Home: React.FC = () => {
             className="rounded-full"
           />
           <div>
-            <h1 className="text-xl font-bold">Multi-Token Analysis Bot</h1>
+            <h1 className="text-xl font-bold">Chat with Typhon Bot</h1>
             <p className="text-sm text-gray-400">
-              Analyzing {tokens.length} tokens on the platform
+              Get detailed insights about {tokenData?.name || "this token"}
             </p>
           </div>
         </div>
@@ -128,11 +144,17 @@ const Home: React.FC = () => {
       <div className="flex-1 overflow-y-auto p-4">
         {messages.length === 0 ? (
           <div className="max-w-4xl mx-auto text-center mt-20">
-            
+            <Image
+              src={imgRobot}
+              alt="Typhon Bot"
+              width={120}
+              height={120}
+              className="mx-auto mb-6 rounded-full"
+            />
             <h2 className="text-2xl font-bold mb-4">Typhon AI Assistant</h2>
             <p className="text-gray-400 mb-8">
-              Ask me anything about {tokens.length} listed tokens. Compare market caps,
-              analyze trends, and explore token metrics.
+              Ask me anything about {tokenData?.name || "this token"}. I can analyze price trends,
+              tokenomics, and recent market activity.
             </p>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -140,7 +162,8 @@ const Home: React.FC = () => {
                 <button
                   key={index}
                   onClick={() => setInputMessage(question)}
-                  className="bg-transparent hover:bg-none border border-[#5ca9d6] px-4 py-2 rounded-lg font-[500] hover:bg-[#5ca9d6] transition duration-150"
+
+                  className="p-3 text-left rounded-lg bg-[#1A1F2C] hover:bg-[#2F3548] transition-colors"
                 >
                   {question}
                 </button>
@@ -154,17 +177,11 @@ const Home: React.FC = () => {
                 key={index}
                 className={`flex ${msg.isUser ? "justify-end" : "justify-start"}`}
               >
-                <div
-                  className={`max-w-[80%] p-4 rounded-lg ${msg.isUser
-                      ? "bg-[#2F3548] rounded-br-none"
-                      : "bg-[#1A1F2C] rounded-bl-none"
-                    }`}
-                  dangerouslySetInnerHTML={{
-                    __html: msg.content
-                      ? msg.content.replace(/\n/g, '<br />')
-                      : ''
-                  }}
-                />
+                {/* <div
+                  className={`max-w-[80%] p-4 rounded-lg ${msg.isUser ? "bg-[#2F3548] rounded-br-none" : "bg-[#1A1F2C] rounded-bl-none"}`}
+                  dangerouslySetInnerHTML={{ __html: marked(msg.content) }}
+                /> */}
+                <TypewriterMarkdown isUser={msg.isUser} text={msg.content} speed={10} />
               </div>
             ))}
             {isLoading && (
@@ -176,29 +193,28 @@ const Home: React.FC = () => {
             )}
             <div ref={messagesEndRef} />
           </div>
+
+          // <div className="max-w-4xl mx-auto space-y-4">
+          //   this is chatgpt
+
+          // </div>
+
         )}
       </div>
 
       <form onSubmit={handleSubmit} className="p-4 border-t border-[#2F3548]">
         <div className="max-w-4xl mx-auto flex gap-2">
-          <Image
-            src={imgRobot}
-            alt="Typhon Bot"
-            width={40}
-            height={40}
-            className="rounded-full"
-          />
           <input
             type="text"
             value={inputMessage}
             onChange={(e) => setInputMessage(e.target.value)}
-            placeholder="Ask about tokens..."
-            className="flex-1 p-3 rounded-lg bg-[#1A1F2C] focus:outline-none focus:ring-2 focus:ring-[#5ca9d6]"
-            disabled={isLoading || isTokensLoading}
+            placeholder="Ask about this token..."
+            className="flex-1 p-3 rounded-lg bg-[#1A1F2C] focus:outline-none focus:ring-2 focus:ring-[#4d9dcb]"
+            disabled={isLoading}
           />
           <button
             type="submit"
-            className="p-3 text-left rounded-lg bg-[black] hover:bg-[#5ca9d6] transition-colors border border-[#5ca9d6]"
+            className="p-3 text-left rounded-lg bg-[black] hover:bg-[#4d9dcb] transition-colors border-2 border-[white]"
             disabled={isLoading}
           >
             <SendHorizonal className="w-5 h-5 text-white" />
@@ -209,4 +225,4 @@ const Home: React.FC = () => {
   );
 };
 
-export default Home;
+export default ChatPage;

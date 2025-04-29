@@ -102,7 +102,7 @@ const NFTGamingCompanionPage = () => {
   }, []);
 
   return (
-    <div className="h-full bg-[#161616] p-8 space-y-6 overflow-auto scrollbar-thin">
+    <div className="h-full bg-[#161616] p-8 space-y-6 overflow-auto scrollbar-thin mt-28">
       <motion.h1 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}

@@ -97,8 +97,8 @@ const InfyNft = () => {
 
 
   return (
-    <div className="font-interfont">
-      <div className="relative mx-auto pt-6 flex flex-col items-center justify-center text-[#D2DADF] bg-[url('/assets/nft/infynft/gradient.svg')] bg-cover">
+    <div className="font-interfont mt-28">
+      <div className="relative mx-auto p-8 flex flex-col items-center justify-center text-[#D2DADF] bg-[url('/assets/nft/infynft/gradient.svg')] bg-cover">
         <div className="flex w-full md:max-w-[1120px] flex-col gap-10 md:gap-20 px-5 xl:px-0">
           <div className="flex flex-col gap-5 md:gap-[20px]">
             <div className="flex items-center justify-between">
@@ -166,11 +166,12 @@ const InfyNft = () => {
                         </Link>
                         <div className="flex items-center justify-between gap-4 w-full">
                           <Link
-                            href={`/detailtoken?token=${token.address}`}
+                            href={`https://gmgn.ai/sol/token/${token.address}`}
+                            target="_blank"
                           >
                             <div className="flex items-center justify-center rounded p-0.5 text-sm font-semibold text-[#5EE616] bg-gradient-to-r from-green-400 to-teal-600 hover:text-[#FDFBFB] w-fit mx-auto">
                               <Button size="sm" className='w-[100px] bg-[#161616] text-thite border-2 border-white'>
-                                <Image src={imgSolana} width={25} height={25} alt="solana" /> &nbsp;0.25
+                                <Image src={imgSolana} width={25} height={25} alt="solana" /> &nbsp;Buy
                               </Button>
                             </div>
                           </Link>

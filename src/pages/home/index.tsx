@@ -18,7 +18,7 @@ import imgCopy from '/public/images/copy.png';
 const Home = () => {
   
   return (
-    <div className="flex flex-col bg-[#161616] h-full overflow-auto">
+    <div className="flex flex-col bg-[#161616] h-full overflow-auto mt-28">
       <div className="flex-1 space-y-4 p-8">
         <div className="w-full">
           <div className="grid grid-cols-3 gap-4">
